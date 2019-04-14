@@ -1,2 +1,2 @@
 # CRISPR-BE-RNA-editing
-Model / analysis repository for learning sequence features of RNA editing by base editors
+Primary + secondary structure determinants of off-target RNA editing by CRISPR base editors

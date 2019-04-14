@@ -1,3 +1,7 @@
+# CL specific files -- too big
+data/dna_variants/HEK293_allDNA.rds
+data/dna_variants/HepG2_allDNA.rds
+
 # History files
 .Rhistory
 .Rapp.history
