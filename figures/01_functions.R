@@ -5,13 +5,14 @@ library(dplyr)
 library(data.table)
 library(gtools)
 library(Biostrings)
+options(datatable.fread.input.cmd.message=FALSE)
 
-importMetaOnly <- function(sample, editor){
+importMetaOnly <- function(sample, editor, chrs = 1:23){
   
   # Pull meta data from 
-  dir_struct <- paste0("../fastas/", editor, "-secondary")
+  dir_struct <- paste0("../../CRISPR-",editor,"-RNA-DATA/fastas/", editor, "-secondary")
   struct_files <- list.files(dir_struct, pattern = paste0(sample), full.names = TRUE)
-  struct_files <- struct_files[grepl(".gz", struct_files)]
+  struct_files <- struct_files[grepl(".gz", struct_files)][chrs]
   struct_input <- sapply(struct_files, function(faf) fread(paste0("zcat < ", faf), header = FALSE)[[1]][c(TRUE, FALSE)]) %>% unlist() %>% unname()
   
   meta <- data.frame(stringr::str_split_fixed(struct_input, pattern = "_", n = 7), stringsAsFactors = FALSE)
@@ -20,15 +21,15 @@ importMetaOnly <- function(sample, editor){
   return(meta)
 }
 
-importEssential <- function(sample, editor, pad = 1, proximal_GC_radius = 10){
+importEssential <- function(sample, editor, pad = 1, proximal_GC_radius = 10, chrs = 1:23){
   # Import sequence fasta files
-  dir_seq <- paste0("../fastas/", editor, "-sequence")
-  dir_struct <- paste0("../fastas/", editor, "-secondary")
+  dir_seq <- paste0("../../CRISPR-",editor,"-RNA-DATA/fastas/", editor, "-sequence")
+  dir_struct <- paste0("../../CRISPR-",editor,"-RNA-DATA/fastas/", editor, "-secondary")
   
   seq_fastas <- list.files(dir_seq, pattern = paste0(sample), full.names = TRUE)
-  seq_fastas <- seq_fastas[grepl(".gz", seq_fastas)]
+  seq_fastas <- seq_fastas[grepl(".gz", seq_fastas)][chrs]
   struct_files <- list.files(dir_struct, pattern = paste0(sample), full.names = TRUE)
-  struct_files <- struct_files[grepl(".gz", struct_files)]
+  struct_files <- struct_files[grepl(".gz", struct_files)][chrs]
   
   # Import data into a list
   fasta_input <- sapply(seq_fastas, function(faf) unlist(read.fasta(faf, as.string = TRUE)))

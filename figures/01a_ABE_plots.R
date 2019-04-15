@@ -4,7 +4,7 @@ library(lmtest)
 source("01_functions.R")
 
 # Import both but also filter down to only the treated sample
-both <- rbind(importEssential("156B", "ABE"), importEssential("156A", "ABE"))
+both <- rbind(importEssential("156B", "ABE", chrs = 1:2), importEssential("156A", "ABE", chrs = 1:2))
 meta <- both %>% filter(Library == "156B")
 
 both %>% group_by(paired, Library) %>% summarize(count = n(), gZ = sum(editRate > 0)) %>%
@@ -37,6 +37,8 @@ p2 <- ggplot(plot_df_tile, aes(x = X1, y = X3, fill = prop_5)) +
   scale_fill_gradientn(colors = jdb_palette("brewer_red"), limits = c(0,max_val)) +
   theme(legend.position = "none") + ggtitle("ABE")
 cowplot::ggsave(p2, file= "output_figures/01b_tile-5percent_ABE.pdf", width = 1.1, height = 1.2)
+
+
 
 # Demonstrate non-linearity
 plot_df_tile2 <- meta %>% group_by(X1, X3, paired) %>% 
