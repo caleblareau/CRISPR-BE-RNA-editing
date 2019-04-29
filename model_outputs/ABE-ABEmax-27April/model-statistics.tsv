@@ -1,0 +1,5 @@
+modnames	curvetypes	aucs
+Training_data	ROC	0.918167521545128
+Training_data	PRC	0.74980489469387
+Validation_data	ROC	0.903299017447001
+Validation_data	PRC	0.726769139721504

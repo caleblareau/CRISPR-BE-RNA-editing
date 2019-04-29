@@ -2,7 +2,7 @@ library(BuenColors)
 library(data.table)
 library(dplyr)
 
-dt_ABE <- fread("ABE-outfile.tsv", stringsAsFactors = TRUE, col.names = c("sequence", "base", "position", "value"))
+dt_ABE <- fread("CBE-binary-outfile.tsv", stringsAsFactors = TRUE, col.names = c("sequence", "base", "position", "value"))
 
 ABE_plot <- ggplot(dt_ABE %>% filter(base != "e"), aes(x = (position- 51), y = value, color = base, group = (position- 51))) +
   geom_boxplot(fill = NA, outlier.shape = NA) +
@@ -12,7 +12,7 @@ ABE_plot <- ggplot(dt_ABE %>% filter(base != "e"), aes(x = (position- 51), y = v
   theme(legend.position = "none") + scale_color_manual(values = c("green3", "blue", "orange3", "firebrick")) +
   geom_vline(xintercept = 0, linetype = 2) +
   labs(x = "Position relative to edit", y = "Deeplift Importance")
-
+ABE_plot
 
 dt_CBE <- fread("CBE-outfile.tsv", stringsAsFactors = TRUE, col.names = c("sequence", "base", "position", "value"))
 
