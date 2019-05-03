@@ -1,4 +1,9 @@
-
+library(seqinr)
+library(stringr)
+library(reshape2)
+library(data.table)
+library(dplyr)
+library(gtools)
 
 importForDeep_noStructure <- function(sample, editor){
   
