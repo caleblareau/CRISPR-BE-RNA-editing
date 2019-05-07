@@ -7,19 +7,15 @@ library(stringr)
 library(gtools)
 library(precrec)
 
-
-source("../figures/01_functions.R")
+source("00_functions.R")
 
 # Import essential meta features
-ABE1 <- importEssential("243C", "ABE", pad = 3, chrs = 1:10)
-ABE2 <- importEssential("244C", "ABE", pad = 3, chrs = 11:20)
+if(FALSE){
+  ABE1 <- subset_data_to_balance(importForLogistic("243B", "ABE", pad = 5, chrs = c(1:20)))
+}
+
 
 ABE1_clip <- ABE1 %>% 
-  mutate(is_edited = editRate > 0) %>%
-  mutate(upstream = paste0(X1,X2,X3), downstream = paste0(X5,X6,X7)) %>% 
-  filter(editRate > 0.05 | editRate == 0)
-
-ABE2_clip <- ABE2 %>% 
   mutate(is_edited = editRate > 0) %>%
   mutate(upstream = paste0(X1,X2,X3), downstream = paste0(X5,X6,X7)) %>% 
   filter(editRate > 0.05 | editRate == 0)
