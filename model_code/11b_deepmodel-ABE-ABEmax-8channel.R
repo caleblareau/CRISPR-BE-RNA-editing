@@ -29,13 +29,12 @@ validation_data <-list_two[["test"]][,c("sequence", "structure")]
 validation_labels <- list_two[["test"]][,"isEdited"] %>% as.numeric()
 
 # Setup one-hot encoding w/ standardization
-training_array <- make_one_hot_eight_channel(training_data) - 0.125
-validation_array <- make_one_hot_eight_channel(validation_data)  - 0.125
-
+training_array <- make_one_hot_eight_channel(training_data)
+validation_array <- make_one_hot_eight_channel(validation_data)  
 
 # Fit CNN via keras / tensorflow
 model <-keras_model_sequential() %>%   
-  layer_conv_1d(filters = 50, kernel_size = 11, activation = "relu", input_shape = c(101, 5), name = "conv1") %>% 
+  layer_conv_1d(filters = 50, kernel_size = 11, activation = "relu", input_shape = c(101, 8), name = "conv1") %>% 
   layer_conv_1d(filters = 50, kernel_size = 11, activation = "relu", name = "conv2") %>% 
   layer_global_average_pooling_1d() %>%
   layer_dense(units = 50, activation = "relu") %>%

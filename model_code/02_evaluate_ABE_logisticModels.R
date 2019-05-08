@@ -88,6 +88,7 @@ rbindlist(lapply(c(1,3), function(i) {
   print(i)
   fit_logistic_model("CBE", "89B", i, "BE3")
 })) %>% data.frame() -> BE3df
+BE3df
 BE3df$metric <- factor(as.character(BE3df$metric), levels = c("AUROC", "AUPRC"))
 
 p3 <- ggplot(BE3df, aes(x = window, y = value, fill = rev(dataset))) +

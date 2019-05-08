@@ -133,8 +133,7 @@ subset_data_to_balance <- function(all_data, seed = 5, n_excess = 5){
   n_excess <- n_excess
   idx_train <- sample(c(which(put_in_train & all_data[,"isEdited"]), 
                         sample(which(put_in_train & !all_data[,"isEdited"]), size = min(n_neg_in_train,n_excess*n_pos_in_train))))
-  idx_test <- sample(c(which(put_in_test & all_data[,"isEdited"]), 
-                       sample(which(put_in_test & !all_data[,"isEdited"]), size = min(n_neg_in_test,n_excess*n_pos_in_test))))
+  idx_test <- which(put_in_test)
   
   # Subset
   df_train <- all_data[idx_train,]; rownames(df_train) <- NULL
