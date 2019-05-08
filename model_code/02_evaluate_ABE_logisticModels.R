@@ -54,9 +54,12 @@ fit_logistic_model <- function(editor, sample, window, specific_editor){
 
 # ABE Max
 rbindlist(lapply(c(1,3,5), function(i) {
+  print(i)
   fit_logistic_model("ABE", "243B", i, "ABEmax")
 })) %>% data.frame() -> ABEmaxdf
 ABEmaxdf$metric <- factor(as.character(ABEmaxdf$metric), levels = c("AUROC", "AUPRC"))
+ABEmaxdf
+
 
 p1 <- ggplot(ABEmaxdf, aes(x = window, y = value, fill = rev(dataset))) +
   geom_bar(stat = "identity", color = "black", position=position_dodge()) +
