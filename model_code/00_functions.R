@@ -4,19 +4,18 @@ library(reshape2)
 library(data.table)
 library(dplyr)
 library(gtools)
+library(Biostrings)
+options(datatable.fread.input.cmd.message=FALSE)
 
 importForLogistic <- function(sample, editor, pad = 1, proximal_GC_radius = 10, chrs = 1:20){
-  
-  # Reorder chromosomes for fast subsetting
-  order_chrs <- c(1, 12, 16:22, 2:11, 13:15, 23)
   
   # Import sequence fasta files
   dir_seq <- paste0("../../CRISPR-",editor,"-RNA-DATA/fastas/", editor, "-sequence")
   dir_struct <- paste0("../../CRISPR-",editor,"-RNA-DATA/fastas/", editor, "-secondary")
   
-  seq_fastas <- list.files(dir_seq, pattern = paste0(sample), full.names = TRUE)[order_chrs]
+  seq_fastas <- mixedsort(sort(list.files(dir_seq, pattern = paste0(sample), full.names = TRUE)))
   seq_fastas <- seq_fastas[grepl(".gz", seq_fastas)][chrs]
-  struct_files <- list.files(dir_struct, pattern = paste0(sample), full.names = TRUE)[order_chrs]
+  struct_files <- mixedsort(sort(list.files(dir_struct, pattern = paste0(sample), full.names = TRUE)))
   struct_files <- struct_files[grepl(".gz", struct_files)][chrs]
   
   # Import data into a list
@@ -91,25 +90,28 @@ subset_data_to_balance <- function(all_data, seed = 5, n_excess = 5){
   
   # Subset the data based on chromosome
   test_chromosomes <- c("chr16", "chr17", "chr18", "chr19", "chr20")
-  set.seed(seed)
   put_in_train <- !grepl(paste(test_chromosomes,collapse="|"), all_data$chr)
   put_in_test <- grepl(paste(test_chromosomes,collapse="|"), all_data$chr)
   
   # Downsample
   n_pos_in_train <- sum(put_in_train & all_data[,"isEdited"])
   n_pos_in_test <- sum(put_in_test & all_data[,"isEdited"])
-  n_neg_in_train <- sum(put_in_train & all_data[,"isEdited"])
-  n_neg_in_test <- sum(put_in_test & all_data[,"isEdited"])
+  n_neg_in_train <- sum(put_in_train & !all_data[,"isEdited"])
+  n_neg_in_test <- sum(put_in_test & !all_data[,"isEdited"])
   
-  # Extract indices
+  # Extract indices -- pull all positives and then extract potentially only a subset of the negatives, if necessary (no more than 5x)
   set.seed(seed)
   n_excess <- n_excess
   idx_train <- sample(c(which(put_in_train & all_data[,"isEdited"]), 
                         sample(which(put_in_train & !all_data[,"isEdited"]), size = min(n_neg_in_train,n_excess*n_pos_in_train))))
   idx_test <- sample(c(which(put_in_test & all_data[,"isEdited"]), 
                        sample(which(put_in_test & !all_data[,"isEdited"]), size = min(n_neg_in_test,n_excess*n_pos_in_test))))
-  return(list("train" =  all_data[idx_train,], 
-              "test" =  all_data[idx_test,]))
+  
+  # Subset
+  df_train <- all_data[idx_train,]; rownames(df_train) <- NULL
+  df_test <- all_data[idx_test,]; rownames(df_test) <- NULL
+  
+  return(list("train" =  df_train,  "test" =  df_test))
 }
 
 

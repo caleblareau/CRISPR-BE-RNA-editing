@@ -12,40 +12,21 @@ source("00_functions.R")
 
 batch_size <- 256 # batch size for training 
 n_epochs <- 10 # training epochs
-model_dir <- "../model_outputs/CBE-BE3-27April"
+model_dir <- "../model_outputs/ABE-ABEmax-27April"
 
 # Create output directory
 dir.create(model_dir)
 
 # import the data from fasta files
-all_data <- importForDeep_noStructure("89B", "CBE")
-
-# Subset the data based on chromosome
-test_chromosomes <- c("chr16", "chr17", "chr18", "chr19", "chr20")
-set.seed(5)
-put_in_train <- !grepl(paste(test_chromosomes,collapse="|"), all_data$chr)
-put_in_test <- grepl(paste(test_chromosomes,collapse="|"), all_data$chr)
-
-# Downsample
-n_pos_in_train <- sum(put_in_train & all_data[,"isEdited"])
-n_pos_in_test <- sum(put_in_test & all_data[,"isEdited"])
-n_neg_in_train <- sum(put_in_train & all_data[,"isEdited"])
-n_neg_in_test <- sum(put_in_test & all_data[,"isEdited"])
-
-# Extract indices
-set.seed(1)
-n_excess <- 5
-idx_train <- sample(c(which(put_in_train & all_data[,"isEdited"]), 
-                      sample(which(put_in_train & !all_data[,"isEdited"]), size = min(n_neg_in_train,n_excess*n_pos_in_train))))
-idx_test <- sample(c(which(put_in_test & all_data[,"isEdited"]), 
-                     sample(which(put_in_test & !all_data[,"isEdited"]), size = min(n_neg_in_test,n_excess*n_pos_in_test))))
+all_data <- importForDeep_noStructure("243B", "ABE")
 
 # Split into training / test data
-training_data <- all_data[idx_train,c('sequence')]
-training_labels <- all_data[idx_train,'isEdited'] %>% as.numeric()
-validation_data <- all_data[idx_test,c('sequence')]
-validation_labels <- all_data[idx_test,'isEdited'] %>% as.numeric()
+list_two <- subset_data_to_balance(all_data)
 
+training_data <- list_two[["train"]][,"sequence"] %>% as.character()
+training_labels <- list_two[["train"]][,"isEdited"] %>% as.numeric()
+validation_data <-list_two[["test"]][,"sequence"] %>% as.character()
+validation_labels <- list_two[["test"]][,"isEdited"] %>% as.numeric()
 
 # Setup one-hot encoding w/ standardization
 training_array <- make_one_hot_five_channel_string(training_data) - 0.2
