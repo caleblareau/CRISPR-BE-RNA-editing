@@ -2,6 +2,10 @@ library(uwot)
 library(irlba)
 library(reshape2)
 library(Matrix)
+library(stringr)
+library(ggseqlogo)
+library(dbscan)
+
 
 make_one_hot_from_df <- function(x) {
   
@@ -13,30 +17,64 @@ make_one_hot_from_df <- function(x) {
 
 
 make_umap_grid_plot <- function(editor, sample, name){
-  # Import and make one hot encoding of proximal  nucleotides
-  list_df <- readRDS(paste0("../logistic_processed/",editor,"_",sample,"_dfs_for_logistic.rds"))
-  df <- rbind(list_df[["train"]], list_df[["test"]])
-  df <- df[df$editRate > 0 & df$editRate < 1,]
-  df <- head(df, 5000)
-  df$transformedEditRate <- logit(df$editRate)
-  one_hot <- make_one_hot_from_df(df[,c(paste0("X", as.character(1:11)), "paired", "chr_pos")])
   
+  # Import and make one hot encoding of proximal  nucleotides
+  list_df <- readRDS(paste0("../linear_processed/",editor,"_",sample,"_dfs_for_linear.rds"))
+  list_df <- list_df[list_df$editRate > 0.05 & list_df$editRate < 1,]
+  list_df$transformedEditRate <- logit(list_df$editRate)
+  seq_mat <- str_split_fixed(as.character(list_df$sequence), "", 101)
+  essential_df <- data.frame(paired = list_df$paired, seq_mat, chr_pos = list_df$chr_pos)
+  one_hot <- make_one_hot_from_df(essential_df)
   
   # Run LSI
   nfreqs <- t(t(one_hot) / Matrix::colSums(one_hot))
   idf <- as(log(1 + ncol(one_hot) / Matrix::rowSums(one_hot)), "sparseVector")
   tf_idf_counts <- as(Diagonal(x=as.vector(idf)), "sparseMatrix") %*% nfreqs
-  SVD_go <-  irlba(tf_idf_counts, 20, 20)
+  SVD_go <-  irlba(tf_idf_counts, 50, 50)
   
-  # Perform a supervised UMAP embedding
+  # Perform a supervised UMAP embedding + community detection
+  knn <- FNN::get.knn(SVD_go$u, algo="kd_tree", k = 10)[["nn.index"]]
+  igraphObj <- igraph::graph_from_adjacency_matrix(igraph::get.adjacency(igraph::graph.edgelist(data.matrix(reshape2::melt(knn)[,c("Var1", "value")]), directed=FALSE)), mode = "undirected")
+  louvain_output <- igraph::cluster_louvain(igraphObj)
+  per_edit_cluster <- igraph::membership(louvain_output)
+  table(per_edit_cluster)
+  
+  
+  lapply(sort(unique(per_edit_cluster)), function(cluster){
+    n = sum(cluster == per_edit_cluster)
+    
+    data.frame(seq_mat[cluster == per_edit_cluster,], x = 1) %>% reshape2::melt(id.vars = "x") %>%
+      group_by(variable, value) %>% summarize(count = n()) %>%
+      ungroup() %>% group_by(variable) %>%
+      mutate(freq = count/sum(count)) %>%
+      reshape2::dcast(variable~value, value.var = "freq") -> freq_df
+    colnames(freq_df) <- toupper(colnames(freq_df))
+    
+    p1 <- ggseqlogo(t(freq_df[,c("A", "C", "G", "T")]))+
+      theme(axis.title.x=element_blank(),
+            axis.text.x=element_blank(),
+            axis.ticks.x=element_blank()) + L_border() +
+      scale_y_continuous(expand = c(0,0)) +
+      ggtitle(paste0(name, " cluster ", as.character(cluster), " n=", as.character(n)))
+    p1
+  }) -> list_of_plots
+  pdf(paste0("output_figures/cluster_motifs/", name, "_", editor, "_", sample, "_clusterMotifs", ".pdf"), 10, 2)
+  list_of_plots
+  dev.off()
+  
+  # Do umap things
   unsupervised_umap <- umap(SVD_go$u)
+  if(typeof(unsupervised_umap) == "list") unsupervised_umap <- unsupervised_umap$layout
   
   # Visualize
   colnames(unsupervised_umap) <- c("UMAP1", "UMAP2")
-  plot_df <- data.frame(unsupervised_umap, SVD_go$u[,c(1,2, 3,4,5,6)], transformed_rate = df$transformedEditRate,
+  plot_df <- data.frame(unsupervised_umap, transformed_rate = df$transformedEditRate, cluster = as.character(per_edit_cluster), 
                         GC = df$G.C, paired = df$paired, two5p = df$X4, base5p = df$X5,base3p = df$X7, two3p = df$X8)
   
   dna_color_vec <- c("a" = "green3", "c" = "dodgerblue3", "g" = "orange3", "t" = "red")
+  
+  p0 <- ggplot(plot_df, aes(x = UMAP1, y = UMAP2, color = cluster)) +
+    geom_point(size = 0.5) + pretty_plot(fontsize = 8) + L_border()
   
   p1 <- ggplot(plot_df, aes(x = UMAP1, y = UMAP2, color = base5p)) +
     geom_point(size = 0.5) + pretty_plot(fontsize = 8) + L_border() +
@@ -61,13 +99,13 @@ make_umap_grid_plot <- function(editor, sample, name){
     geom_point(size = 0.5) + scale_color_gradientn(colors = jdb_palette("brewer_spectra")) +
     pretty_plot(fontsize = 8) + L_border() + labs(color = "rate")
   
-  cowplot::ggsave(cowplot::plot_grid(p1, p2, p3, p4, p5, p6), 
+  cowplot::ggsave(cowplot::plot_grid(p0, p1, p2, p6, p4, p5), 
                   filename = paste0("output_figures/umaps/",name,"_embedding.pdf"), 
                   width = 10, height = 6)
 }
 
-make_umap_grid_plot("ABE", "243B", "miniABEmax")
-make_umap_grid_plot("ABE", "243C", "ABEmax")
+make_umap_grid_plot("ABE", "243B", "ABEmax")
+make_umap_grid_plot("ABE", "243C", "miniABEmax")
 make_umap_grid_plot("CBE", "89B", "BE3")
 make_umap_grid_plot("CBE", "160F", "A3A")
 

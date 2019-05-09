@@ -1,25 +1,31 @@
 library(BuenColors)
 library(lmtest)
 
-source("01_functions.R")
+source("00_functions.R")
 
 # Import both but also filter down to only the treated sample
-both <- rbind(importEssential("156B", "ABE", chrs = 1:2), importEssential("156A", "ABE", chrs = 1:2))
-meta <- both %>% filter(Library == "156B")
-
-both %>% group_by(paired, Library) %>% summarize(count = n(), gZ = sum(editRate > 0)) %>%
-  mutate(rate = gZ/count)
-
-both$paired <- factor(as.character(both$paired))
-both <- both %>% mutate(four = paste0(paired,"_",as.character(Library)))
-p1 <- ggplot(both, aes(x = editRate + 0.001, color = four, linetype = paired) ) +
-  stat_ecdf() + scale_x_log10(breaks = c(0.001, 0.01, 0.1, 1.0)) +
-  pretty_plot(fontsize = 7) + L_border() + labs(x = "A>I editing rate", y = "Empirical cumulative density") +
-  scale_linetype_manual(values=c( "FALSE" = "solid", "TRUE" = "dashed")) +
-  scale_color_manual(values = c("TRUE_156A" = "red", "FALSE_156A" = "darkgrey", "FALSE_156B" = "firebrick", "TRUE_156B" = "black")) +
-  scale_y_continuous(expand = c(0,0)) +
-  ggtitle("ABE (n = 3.3M)")
-cowplot::ggsave(p1, file= "output_figures/01_ecdf_ABE.pdf", width = 2.5, height = 1.6)
+make_ecdf <- function(editor, treated_sample, control_sample){
+  meta <- readRDS(paste0("processed_df/",editor,"-",treated_sample,"-essentialDF.rds")); meta$what <- "Treated"
+  control <- readRDS(paste0("processed_df/",editor,"-",control_sample,"-essentialDF.rds")); control$what <- "Control"
+  both <- rbind(meta, control)
+  
+  both %>% group_by(paired, Library) %>% summarize(count = n(), gZ = sum(editRate > 0)) %>%
+    mutate(rate = gZ/count)
+  
+  both$paired <- factor(as.character(both$paired))
+  both <- both %>% mutate(four = paste0(paired,"_",as.character(what)))
+  p1 <- ggplot(both, aes(x = editRate + 0.001, color = four, linetype = paired) ) +
+    stat_ecdf() + scale_x_log10(breaks = c(0.001, 0.01, 0.1, 1.0)) +
+    pretty_plot(fontsize = 6) + L_border() + labs(x = "X>X editing rate", y = "Cumulative Density") +
+    scale_linetype_manual(values=c( "FALSE" = "solid", "TRUE" = "dashed")) +
+    scale_color_manual(values = c("TRUE_Control" = "red", "FALSE_Control" = "darkgrey", "FALSE_Treated" = "firebrick", "TRUE_Treated" = "black")) +
+    scale_y_continuous(expand = c(0,0)) +  theme(legend.position='none')
+  cowplot::ggsave(p1, file= paste0("output_figures/01_ecdf_",editor, "_", treated_sample, "_",control_sample,".pdf"), width = 1.3, height = 1.3)
+}
+make_ecdf("CBE", "160F", "160B")
+make_ecdf("CBE", "89B", "89A")
+make_ecdf("ABE", "243B", "243A")
+make_ecdf("ABE", "243C", "243A")
 
 plot_df_tile <- meta %>% group_by(X1, X3) %>% 
   summarize(count_5 = sum(editRate >= 0.05), n = n(), avg_edit = mean(editRate)) %>%
@@ -36,7 +42,7 @@ p2 <- ggplot(plot_df_tile, aes(x = X1, y = X3, fill = prop_5)) +
   scale_x_discrete(expand = c(0,0), labels = c("A", "C", "G", "U")) +
   scale_fill_gradientn(colors = jdb_palette("brewer_red"), limits = c(0,max_val)) +
   theme(legend.position = "none") + ggtitle("ABE")
-cowplot::ggsave(p2, file= "output_figures/01b_tile-5percent_ABE.pdf", width = 1.1, height = 1.2)
+cowplot::ggsave(p2, file= paste0("output_figures/01_tile-5percent_ABE.pdf"), width = 1.1, height = 1.2)
 
 
 

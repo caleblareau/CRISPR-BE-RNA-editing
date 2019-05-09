@@ -131,8 +131,9 @@ subset_data_to_balance <- function(all_data, seed = 5, n_excess = 5){
   # Extract indices -- pull all positives and then extract potentially only a subset of the negatives, if necessary (no more than 5x)
   set.seed(seed)
   n_excess <- n_excess
-  idx_train <- sample(c(which(put_in_train & all_data[,"isEdited"]), 
-                        sample(which(put_in_train & !all_data[,"isEdited"]), size = min(n_neg_in_train,n_excess*n_pos_in_train))))
+  #idx_train <- sample(c(which(put_in_train & all_data[,"isEdited"]), 
+  #                      sample(which(put_in_train & !all_data[,"isEdited"]), size = min(n_neg_in_train,n_excess*n_pos_in_train))))
+  idx_train <- which(put_in_train)
   idx_test <- which(put_in_test)
   
   # Subset
