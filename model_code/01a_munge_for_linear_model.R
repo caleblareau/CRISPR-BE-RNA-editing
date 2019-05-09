@@ -37,6 +37,7 @@ importForLinear <- function(sample, editor, chrs = 1:20){
 process_sample_linear <- function(sample, editor, chrs = 1:20){
   df <- importForLinear(sample, editor, chrs = chrs)
   saveRDS(df, file = paste0("../linear_processed/", editor, "_", sample, "_dfs_for_linear.rds"))
+
   paste0(sample, editor)
 }
 
@@ -62,6 +63,7 @@ if(TRUE){
   
   # Process CBE samples -- BE3
   process_sample_linear("89B", "CBE")
+
   #process_sample("90B", "CBE")
 }
 
