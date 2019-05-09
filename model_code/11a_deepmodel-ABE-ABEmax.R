@@ -11,7 +11,7 @@ library(BuenColors)
 source("00_functions.R")
 
 batch_size <- 256 # batch size for training 
-n_epochs <- 10 # training epochs
+n_epochs <- 3 # training epochs
 model_dir <- "../model_outputs/ABE-ABEmax-27April"
 
 # Create output directory
@@ -29,8 +29,8 @@ validation_data <-list_two[["test"]][,"sequence"] %>% as.character()
 validation_labels <- list_two[["test"]][,"isEdited"] %>% as.numeric()
 
 # Setup one-hot encoding w/ standardization
-training_array <- make_one_hot_five_channel_string(training_data) - 0.2
-validation_array <- make_one_hot_five_channel_string(validation_data)  - 0.2
+training_array <- make_one_hot_five_channel_string(training_data) 
+validation_array <- make_one_hot_five_channel_string(validation_data)  
 
 # Fit CNN via keras / tensorflow
 model <- keras_model_sequential() %>%   

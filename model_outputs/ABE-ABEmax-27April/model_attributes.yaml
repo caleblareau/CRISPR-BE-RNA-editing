@@ -50,7 +50,7 @@ config:
     trainable: true
     use_bias: true
 - class_name: GlobalAveragePooling1D
-  config: {name: global_average_pooling1d_6, trainable: true}
+  config: {name: global_average_pooling1d_8, trainable: true}
 - class_name: Dense
   config:
     activation: relu
@@ -65,7 +65,7 @@ config:
       class_name: VarianceScaling
       config: {distribution: uniform, mode: fan_avg, scale: 1.0, seed: null}
     kernel_regularizer: null
-    name: dense_16
+    name: dense_22
     trainable: true
     units: 50
     use_bias: true
@@ -85,7 +85,7 @@ config:
       class_name: VarianceScaling
       config: {distribution: uniform, mode: fan_avg, scale: 1.0, seed: null}
     kernel_regularizer: null
-    name: dense_17
+    name: dense_23
     trainable: true
     units: 3
     use_bias: true
@@ -103,11 +103,11 @@ config:
       class_name: VarianceScaling
       config: {distribution: uniform, mode: fan_avg, scale: 1.0, seed: null}
     kernel_regularizer: null
-    name: dense_18
+    name: dense_24
     trainable: true
     units: 1
     use_bias: true
 - class_name: Activation
-  config: {activation: sigmoid, name: activation_6, trainable: true}
+  config: {activation: sigmoid, name: activation_8, trainable: true}
 keras_version: 2.2.2
 
