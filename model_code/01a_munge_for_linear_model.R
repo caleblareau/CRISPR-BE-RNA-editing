@@ -1,7 +1,7 @@
 
 source("00_functions.R")
 
-importForLinear <- function(sample, editor, chrs = 1:20){
+importForLinear <- function(sample, editor, chrs = 1:23){
   
   # Import sequence fasta files
   dir_seq <- paste0("../../CRISPR-",editor,"-RNA-DATA/fastas/", editor, "-sequence")
@@ -27,17 +27,20 @@ importForLinear <- function(sample, editor, chrs = 1:20){
   # Process meta to convert characters to numeric
   meta$editRate <- as.numeric(meta$editRate); meta$coverage <- as.numeric(meta$coverage)
   meta <- data.frame(meta, sequence = unname(unlist(fasta_input)), paired)
-  meta <- meta[meta$editRate > 0.02,]
+  meta <- meta[meta$editRate > 0.01,]
+  meta$chr <- stringr::str_split_fixed(meta$chr_pos, "-", 2)[,1]
   rownames(meta) <- NULL
   return(meta)
 }
 
 
 # Import essential meta features including 10 bp surrounding sequence
-process_sample_linear <- function(sample, editor, chrs = 1:20){
+process_sample_linear <- function(sample, editor, chrs = 1:23){
   df <- importForLinear(sample, editor, chrs = chrs)
-  saveRDS(df, file = paste0("../linear_processed/", editor, "_", sample, "_dfs_for_linear.rds"))
-
+  df$sequence <- factor(as.character(df$sequence))
+  rownames(df) <- NULL
+  saveRDS(df, file = paste0("../linear_processed/", editor, "_", sample, "_linearDF.rds"))
+  
   paste0(sample, editor)
 }
 
