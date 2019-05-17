@@ -143,6 +143,28 @@ subset_data_to_balance <- function(all_data, seed = 5, n_excess = 5){
   return(list("train" =  df_train,  "test" =  df_test))
 }
 
+subset_data_based_on_5p <- function(all_data, accept_letters = c("a")){
+  
+  stopifnot(all(c("isEdited") %in% colnames(all_data)))
+  
+  # Subset the data based on chromosome
+  test_chromosomes <- c("chr16", "chr17", "chr18", "chr19", "chr20")
+  put_in_train <- !grepl(paste(test_chromosomes,collapse="|"), all_data$chr)
+  put_in_test <- grepl(paste(test_chromosomes,collapse="|"), all_data$chr)
+  
+  # Pull 5p letters
+  x5p <- substr(all_data$sequence, 50, 50)
+  
+  idx_train <- which(put_in_train & (x5p %in% accept_letters))
+  idx_test <- which(put_in_test & (x5p %in% accept_letters))
+  
+  # Subset
+  df_train <- all_data[idx_train,]; rownames(df_train) <- NULL
+  df_test <- all_data[idx_test,]; rownames(df_test) <- NULL
+  
+  return(list("train" =  df_train,  "test" =  df_test))
+}
+
 
 make_one_hot_eight_channel <- function(x) {
   
