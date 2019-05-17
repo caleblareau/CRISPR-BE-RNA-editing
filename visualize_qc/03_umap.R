@@ -4,7 +4,6 @@ library(reshape2)
 library(Matrix)
 library(stringr)
 library(ggseqlogo)
-library(dbscan)
 
 
 make_one_hot_from_df <- function(x) {
@@ -19,7 +18,7 @@ make_one_hot_from_df <- function(x) {
 make_umap_grid_plot <- function(editor, sample, name){
   
   # Import and make one hot encoding of proximal  nucleotides
-  list_df <- readRDS(paste0("../linear_processed/",editor,"_",sample,"_dfs_for_linear.rds"))
+  list_df <- readRDS(paste0("../linear_processed/",editor,"_",sample,"_linearDF.rds"))
   list_df <- list_df[list_df$editRate > 0.05 & list_df$editRate < 1,]
   list_df$transformedEditRate <- logit(list_df$editRate)
   seq_mat <- str_split_fixed(as.character(list_df$sequence), "", 101)
@@ -31,6 +30,22 @@ make_umap_grid_plot <- function(editor, sample, name){
   idf <- as(log(1 + ncol(one_hot) / Matrix::rowSums(one_hot)), "sparseVector")
   tf_idf_counts <- as(Diagonal(x=as.vector(idf)), "sparseMatrix") %*% nfreqs
   SVD_go <-  irlba(tf_idf_counts, 50, 50)
+  
+  if(FALSE){
+    df <- data.frame(SVD_go$v, what = colnames(tf_idf_counts), letter = str_split_fixed(colnames(tf_idf_counts), "_", 2)[,2])
+    df <- df[df$letter %in% c("a", "c", "g", "t"),]
+    p1 <- ggplot(df, aes(x = X1, y = X2, label = what, color = letter)) + 
+      geom_text() + labs(x = "LSI1", y = "LSI2")
+    p2 <- ggplot(df, aes(x = X3, y = X4, label = what, color = letter)) + 
+      geom_text() + labs(x = "LSI3", y = "LSI4")
+    p3 <- ggplot(df, aes(x = X5, y = X6, label = what, color = letter)) + 
+      geom_text() + labs(x = "LSI5", y = "LSI6")
+    p4 <- ggplot(df, aes(x = X7, y = X8, label = what, color = letter)) + 
+      geom_text() + labs(x = "LSI7", y = "LSI8")
+    
+    cowplot::ggsave(cowplot::plot_grid(p1, p2, p3, p4, nrow = 2), 
+                    file = "output_figures/umaps/LSI4.pdf", width = 10, height = 10)
+  }
   
   # Perform a supervised UMAP embedding + community detection
   knn <- FNN::get.knn(SVD_go$u, algo="kd_tree", k = 10)[["nn.index"]]

@@ -22,8 +22,7 @@ ABE2_clip <- ABE2 %>%
   mutate(upstream = paste0(X1,X2,X3), downstream = paste0(X5,X6,X7)) %>% 
   filter(transformed_outcome < 10 & transformed_outcome > -10)
 
-linearMod <- speedlm(transformed_outcome ~ G.C + upstream + downstream + as.numeric(paired), data=ABE1_clip)
-predicted_ABE <- predict(linearMod, ABE2_clip)
+<
 ABE <- data.frame(predicted = inv.logit(predicted_ABE), observed = ABE2_clip$editRate) %>% 
   filter(predicted > 0.01 | observed > 0.01)
 
