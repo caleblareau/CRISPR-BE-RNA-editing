@@ -1,0 +1,774 @@
+backend: !!python/unicode 'tensorflow'
+class_name: Model
+config:
+  input_layers:
+  - [input1, 0, 0]
+  layers:
+  - class_name: InputLayer
+    config:
+      batch_input_shape: !!python/tuple [null, 1001, 5]
+      dtype: float32
+      name: input1
+      sparse: false
+    inbound_nodes: []
+    name: input1
+  - class_name: Conv1D
+    config:
+      activation: linear
+      activity_regularizer: null
+      bias_constraint: null
+      bias_initializer:
+        class_name: Zeros
+        config: {}
+      bias_regularizer: null
+      data_format: channels_last
+      dilation_rate: !!python/tuple [1]
+      filters: 32
+      kernel_constraint: null
+      kernel_initializer:
+        class_name: VarianceScaling
+        config: {distribution: uniform, mode: fan_avg, scale: 1.0, seed: null}
+      kernel_regularizer: null
+      kernel_size: !!python/tuple [1]
+      name: conv1
+      padding: valid
+      strides: !!python/tuple [1]
+      trainable: true
+      use_bias: true
+    inbound_nodes:
+    - - - input1
+        - 0
+        - 0
+        - {}
+    name: conv1
+  - class_name: BatchNormalization
+    config:
+      axis: -1
+      beta_constraint: null
+      beta_initializer:
+        class_name: Zeros
+        config: {}
+      beta_regularizer: null
+      center: true
+      epsilon: 0.001
+      gamma_constraint: null
+      gamma_initializer:
+        class_name: Ones
+        config: {}
+      gamma_regularizer: null
+      momentum: 0.99
+      moving_mean_initializer:
+        class_name: Zeros
+        config: {}
+      moving_variance_initializer:
+        class_name: Ones
+        config: {}
+      name: batch_normalization_17
+      scale: true
+      trainable: true
+    inbound_nodes:
+    - - - conv1
+        - 0
+        - 0
+        - {}
+    name: batch_normalization_17
+  - class_name: ReLU
+    config: {max_value: null, name: re_lu_17, trainable: true}
+    inbound_nodes:
+    - - - batch_normalization_17
+        - 0
+        - 0
+        - {}
+    name: re_lu_17
+  - class_name: Conv1D
+    config:
+      activation: linear
+      activity_regularizer: null
+      bias_constraint: null
+      bias_initializer:
+        class_name: Zeros
+        config: {}
+      bias_regularizer: null
+      data_format: channels_last
+      dilation_rate: !!python/tuple [1]
+      filters: 32
+      kernel_constraint: null
+      kernel_initializer:
+        class_name: VarianceScaling
+        config: {distribution: uniform, mode: fan_avg, scale: 1.0, seed: null}
+      kernel_regularizer: null
+      kernel_size: !!python/tuple [11]
+      name: conv1d_19
+      padding: valid
+      strides: !!python/tuple [1]
+      trainable: true
+      use_bias: true
+    inbound_nodes:
+    - - - re_lu_17
+        - 0
+        - 0
+        - {}
+    name: conv1d_19
+  - class_name: BatchNormalization
+    config:
+      axis: -1
+      beta_constraint: null
+      beta_initializer:
+        class_name: Zeros
+        config: {}
+      beta_regularizer: null
+      center: true
+      epsilon: 0.001
+      gamma_constraint: null
+      gamma_initializer:
+        class_name: Ones
+        config: {}
+      gamma_regularizer: null
+      momentum: 0.99
+      moving_mean_initializer:
+        class_name: Zeros
+        config: {}
+      moving_variance_initializer:
+        class_name: Ones
+        config: {}
+      name: batch_normalization_18
+      scale: true
+      trainable: true
+    inbound_nodes:
+    - - - conv1d_19
+        - 0
+        - 0
+        - {}
+    name: batch_normalization_18
+  - class_name: ReLU
+    config: {max_value: null, name: re_lu_18, trainable: true}
+    inbound_nodes:
+    - - - batch_normalization_18
+        - 0
+        - 0
+        - {}
+    name: re_lu_18
+  - class_name: Conv1D
+    config:
+      activation: linear
+      activity_regularizer: null
+      bias_constraint: null
+      bias_initializer:
+        class_name: Zeros
+        config: {}
+      bias_regularizer: null
+      data_format: channels_last
+      dilation_rate: !!python/tuple [1]
+      filters: 32
+      kernel_constraint: null
+      kernel_initializer:
+        class_name: VarianceScaling
+        config: {distribution: uniform, mode: fan_avg, scale: 1.0, seed: null}
+      kernel_regularizer: null
+      kernel_size: !!python/tuple [11]
+      name: conv1d_20
+      padding: valid
+      strides: !!python/tuple [1]
+      trainable: true
+      use_bias: true
+    inbound_nodes:
+    - - - re_lu_18
+        - 0
+        - 0
+        - {}
+    name: conv1d_20
+  - class_name: BatchNormalization
+    config:
+      axis: -1
+      beta_constraint: null
+      beta_initializer:
+        class_name: Zeros
+        config: {}
+      beta_regularizer: null
+      center: true
+      epsilon: 0.001
+      gamma_constraint: null
+      gamma_initializer:
+        class_name: Ones
+        config: {}
+      gamma_regularizer: null
+      momentum: 0.99
+      moving_mean_initializer:
+        class_name: Zeros
+        config: {}
+      moving_variance_initializer:
+        class_name: Ones
+        config: {}
+      name: batch_normalization_19
+      scale: true
+      trainable: true
+    inbound_nodes:
+    - - - conv1d_20
+        - 0
+        - 0
+        - {}
+    name: batch_normalization_19
+  - class_name: ReLU
+    config: {max_value: null, name: re_lu_19, trainable: true}
+    inbound_nodes:
+    - - - batch_normalization_19
+        - 0
+        - 0
+        - {}
+    name: re_lu_19
+  - class_name: Conv1D
+    config:
+      activation: linear
+      activity_regularizer: null
+      bias_constraint: null
+      bias_initializer:
+        class_name: Zeros
+        config: {}
+      bias_regularizer: null
+      data_format: channels_last
+      dilation_rate: !!python/tuple [1]
+      filters: 32
+      kernel_constraint: null
+      kernel_initializer:
+        class_name: VarianceScaling
+        config: {distribution: uniform, mode: fan_avg, scale: 1.0, seed: null}
+      kernel_regularizer: null
+      kernel_size: !!python/tuple [11]
+      name: conv1d_21
+      padding: valid
+      strides: !!python/tuple [1]
+      trainable: true
+      use_bias: true
+    inbound_nodes:
+    - - - re_lu_19
+        - 0
+        - 0
+        - {}
+    name: conv1d_21
+  - class_name: BatchNormalization
+    config:
+      axis: -1
+      beta_constraint: null
+      beta_initializer:
+        class_name: Zeros
+        config: {}
+      beta_regularizer: null
+      center: true
+      epsilon: 0.001
+      gamma_constraint: null
+      gamma_initializer:
+        class_name: Ones
+        config: {}
+      gamma_regularizer: null
+      momentum: 0.99
+      moving_mean_initializer:
+        class_name: Zeros
+        config: {}
+      moving_variance_initializer:
+        class_name: Ones
+        config: {}
+      name: batch_normalization_20
+      scale: true
+      trainable: true
+    inbound_nodes:
+    - - - conv1d_21
+        - 0
+        - 0
+        - {}
+    name: batch_normalization_20
+  - class_name: ReLU
+    config: {max_value: null, name: re_lu_20, trainable: true}
+    inbound_nodes:
+    - - - batch_normalization_20
+        - 0
+        - 0
+        - {}
+    name: re_lu_20
+  - class_name: Conv1D
+    config:
+      activation: linear
+      activity_regularizer: null
+      bias_constraint: null
+      bias_initializer:
+        class_name: Zeros
+        config: {}
+      bias_regularizer: null
+      data_format: channels_last
+      dilation_rate: !!python/tuple [1]
+      filters: 32
+      kernel_constraint: null
+      kernel_initializer:
+        class_name: VarianceScaling
+        config: {distribution: uniform, mode: fan_avg, scale: 1.0, seed: null}
+      kernel_regularizer: null
+      kernel_size: !!python/tuple [11]
+      name: conv1d_22
+      padding: valid
+      strides: !!python/tuple [1]
+      trainable: true
+      use_bias: true
+    inbound_nodes:
+    - - - re_lu_20
+        - 0
+        - 0
+        - {}
+    name: conv1d_22
+  - class_name: BatchNormalization
+    config:
+      axis: -1
+      beta_constraint: null
+      beta_initializer:
+        class_name: Zeros
+        config: {}
+      beta_regularizer: null
+      center: true
+      epsilon: 0.001
+      gamma_constraint: null
+      gamma_initializer:
+        class_name: Ones
+        config: {}
+      gamma_regularizer: null
+      momentum: 0.99
+      moving_mean_initializer:
+        class_name: Zeros
+        config: {}
+      moving_variance_initializer:
+        class_name: Ones
+        config: {}
+      name: batch_normalization_21
+      scale: true
+      trainable: true
+    inbound_nodes:
+    - - - conv1d_22
+        - 0
+        - 0
+        - {}
+    name: batch_normalization_21
+  - class_name: ReLU
+    config: {max_value: null, name: re_lu_21, trainable: true}
+    inbound_nodes:
+    - - - batch_normalization_21
+        - 0
+        - 0
+        - {}
+    name: re_lu_21
+  - class_name: Conv1D
+    config:
+      activation: linear
+      activity_regularizer: null
+      bias_constraint: null
+      bias_initializer:
+        class_name: Zeros
+        config: {}
+      bias_regularizer: null
+      data_format: channels_last
+      dilation_rate: !!python/tuple [1]
+      filters: 32
+      kernel_constraint: null
+      kernel_initializer:
+        class_name: VarianceScaling
+        config: {distribution: uniform, mode: fan_avg, scale: 1.0, seed: null}
+      kernel_regularizer: null
+      kernel_size: !!python/tuple [11]
+      name: conv1d_23
+      padding: valid
+      strides: !!python/tuple [1]
+      trainable: true
+      use_bias: true
+    inbound_nodes:
+    - - - re_lu_21
+        - 0
+        - 0
+        - {}
+    name: conv1d_23
+  - class_name: BatchNormalization
+    config:
+      axis: -1
+      beta_constraint: null
+      beta_initializer:
+        class_name: Zeros
+        config: {}
+      beta_regularizer: null
+      center: true
+      epsilon: 0.001
+      gamma_constraint: null
+      gamma_initializer:
+        class_name: Ones
+        config: {}
+      gamma_regularizer: null
+      momentum: 0.99
+      moving_mean_initializer:
+        class_name: Zeros
+        config: {}
+      moving_variance_initializer:
+        class_name: Ones
+        config: {}
+      name: batch_normalization_22
+      scale: true
+      trainable: true
+    inbound_nodes:
+    - - - conv1d_23
+        - 0
+        - 0
+        - {}
+    name: batch_normalization_22
+  - class_name: ReLU
+    config: {max_value: null, name: re_lu_22, trainable: true}
+    inbound_nodes:
+    - - - batch_normalization_22
+        - 0
+        - 0
+        - {}
+    name: re_lu_22
+  - class_name: Conv1D
+    config:
+      activation: linear
+      activity_regularizer: null
+      bias_constraint: null
+      bias_initializer:
+        class_name: Zeros
+        config: {}
+      bias_regularizer: null
+      data_format: channels_last
+      dilation_rate: !!python/tuple [1]
+      filters: 32
+      kernel_constraint: null
+      kernel_initializer:
+        class_name: VarianceScaling
+        config: {distribution: uniform, mode: fan_avg, scale: 1.0, seed: null}
+      kernel_regularizer: null
+      kernel_size: !!python/tuple [11]
+      name: conv1d_24
+      padding: valid
+      strides: !!python/tuple [1]
+      trainable: true
+      use_bias: true
+    inbound_nodes:
+    - - - re_lu_22
+        - 0
+        - 0
+        - {}
+    name: conv1d_24
+  - class_name: BatchNormalization
+    config:
+      axis: -1
+      beta_constraint: null
+      beta_initializer:
+        class_name: Zeros
+        config: {}
+      beta_regularizer: null
+      center: true
+      epsilon: 0.001
+      gamma_constraint: null
+      gamma_initializer:
+        class_name: Ones
+        config: {}
+      gamma_regularizer: null
+      momentum: 0.99
+      moving_mean_initializer:
+        class_name: Zeros
+        config: {}
+      moving_variance_initializer:
+        class_name: Ones
+        config: {}
+      name: batch_normalization_23
+      scale: true
+      trainable: true
+    inbound_nodes:
+    - - - conv1d_24
+        - 0
+        - 0
+        - {}
+    name: batch_normalization_23
+  - class_name: ReLU
+    config: {max_value: null, name: re_lu_23, trainable: true}
+    inbound_nodes:
+    - - - batch_normalization_23
+        - 0
+        - 0
+        - {}
+    name: re_lu_23
+  - class_name: Conv1D
+    config:
+      activation: linear
+      activity_regularizer: null
+      bias_constraint: null
+      bias_initializer:
+        class_name: Zeros
+        config: {}
+      bias_regularizer: null
+      data_format: channels_last
+      dilation_rate: !!python/tuple [1]
+      filters: 32
+      kernel_constraint: null
+      kernel_initializer:
+        class_name: VarianceScaling
+        config: {distribution: uniform, mode: fan_avg, scale: 1.0, seed: null}
+      kernel_regularizer: null
+      kernel_size: !!python/tuple [11]
+      name: conv1d_25
+      padding: valid
+      strides: !!python/tuple [1]
+      trainable: true
+      use_bias: true
+    inbound_nodes:
+    - - - re_lu_23
+        - 0
+        - 0
+        - {}
+    name: conv1d_25
+  - class_name: BatchNormalization
+    config:
+      axis: -1
+      beta_constraint: null
+      beta_initializer:
+        class_name: Zeros
+        config: {}
+      beta_regularizer: null
+      center: true
+      epsilon: 0.001
+      gamma_constraint: null
+      gamma_initializer:
+        class_name: Ones
+        config: {}
+      gamma_regularizer: null
+      momentum: 0.99
+      moving_mean_initializer:
+        class_name: Zeros
+        config: {}
+      moving_variance_initializer:
+        class_name: Ones
+        config: {}
+      name: batch_normalization_24
+      scale: true
+      trainable: true
+    inbound_nodes:
+    - - - conv1d_25
+        - 0
+        - 0
+        - {}
+    name: batch_normalization_24
+  - class_name: ReLU
+    config: {max_value: null, name: re_lu_24, trainable: true}
+    inbound_nodes:
+    - - - batch_normalization_24
+        - 0
+        - 0
+        - {}
+    name: re_lu_24
+  - class_name: Conv1D
+    config:
+      activation: linear
+      activity_regularizer: null
+      bias_constraint: null
+      bias_initializer:
+        class_name: Zeros
+        config: {}
+      bias_regularizer: null
+      data_format: channels_last
+      dilation_rate: !!python/tuple [1]
+      filters: 32
+      kernel_constraint: null
+      kernel_initializer:
+        class_name: VarianceScaling
+        config: {distribution: uniform, mode: fan_avg, scale: 1.0, seed: null}
+      kernel_regularizer: null
+      kernel_size: !!python/tuple [11]
+      name: conv1d_26
+      padding: valid
+      strides: !!python/tuple [1]
+      trainable: true
+      use_bias: true
+    inbound_nodes:
+    - - - re_lu_24
+        - 0
+        - 0
+        - {}
+    name: conv1d_26
+  - class_name: Conv1D
+    config:
+      activation: linear
+      activity_regularizer: null
+      bias_constraint: null
+      bias_initializer:
+        class_name: Zeros
+        config: {}
+      bias_regularizer: null
+      data_format: channels_last
+      dilation_rate: !!python/tuple [1]
+      filters: 32
+      kernel_constraint: null
+      kernel_initializer:
+        class_name: VarianceScaling
+        config: {distribution: uniform, mode: fan_avg, scale: 1.0, seed: null}
+      kernel_regularizer: null
+      kernel_size: !!python/tuple [1]
+      name: conv_branch1
+      padding: valid
+      strides: !!python/tuple [1]
+      trainable: true
+      use_bias: true
+    inbound_nodes:
+    - - - conv1
+        - 0
+        - 0
+        - {}
+    name: conv_branch1
+  - class_name: Conv1D
+    config:
+      activation: linear
+      activity_regularizer: null
+      bias_constraint: null
+      bias_initializer:
+        class_name: Zeros
+        config: {}
+      bias_regularizer: null
+      data_format: channels_last
+      dilation_rate: !!python/tuple [1]
+      filters: 32
+      kernel_constraint: null
+      kernel_initializer:
+        class_name: VarianceScaling
+        config: {distribution: uniform, mode: fan_avg, scale: 1.0, seed: null}
+      kernel_regularizer: null
+      kernel_size: !!python/tuple [11]
+      name: conv1d_27
+      padding: valid
+      strides: !!python/tuple [1]
+      trainable: true
+      use_bias: true
+    inbound_nodes:
+    - - - conv1d_26
+        - 0
+        - 0
+        - {}
+    name: conv1d_27
+  - class_name: Concatenate
+    config: {axis: 1, name: concatenate_3, trainable: null}
+    inbound_nodes:
+    - - - conv_branch1
+        - 0
+        - 0
+        - &id001 {}
+      - - conv1d_27
+        - 0
+        - 0
+        - *id001
+    name: concatenate_3
+  - class_name: Flatten
+    config: {data_format: channels_last, name: flatten1, trainable: true}
+    inbound_nodes:
+    - - - concatenate_3
+        - 0
+        - 0
+        - {}
+    name: flatten1
+  - class_name: Dropout
+    config: {name: dropout2, noise_shape: null, rate: 0.3, seed: null, trainable: true}
+    inbound_nodes:
+    - - - flatten1
+        - 0
+        - 0
+        - {}
+    name: dropout2
+  - class_name: Dense
+    config:
+      activation: relu
+      activity_regularizer: null
+      bias_constraint: null
+      bias_initializer:
+        class_name: Zeros
+        config: {}
+      bias_regularizer: null
+      kernel_constraint: null
+      kernel_initializer:
+        class_name: VarianceScaling
+        config: {distribution: uniform, mode: fan_avg, scale: 1.0, seed: null}
+      kernel_regularizer: null
+      name: dense_10
+      trainable: true
+      units: 64
+      use_bias: true
+    inbound_nodes:
+    - - - dropout2
+        - 0
+        - 0
+        - {}
+    name: dense_10
+  - class_name: Dropout
+    config: {name: dropout3, noise_shape: null, rate: 0.3, seed: null, trainable: true}
+    inbound_nodes:
+    - - - dense_10
+        - 0
+        - 0
+        - {}
+    name: dropout3
+  - class_name: Dense
+    config:
+      activation: relu
+      activity_regularizer: null
+      bias_constraint: null
+      bias_initializer:
+        class_name: Zeros
+        config: {}
+      bias_regularizer: null
+      kernel_constraint: null
+      kernel_initializer:
+        class_name: VarianceScaling
+        config: {distribution: uniform, mode: fan_avg, scale: 1.0, seed: null}
+      kernel_regularizer: null
+      name: dense_11
+      trainable: true
+      units: 64
+      use_bias: true
+    inbound_nodes:
+    - - - dropout3
+        - 0
+        - 0
+        - {}
+    name: dense_11
+  - class_name: Dropout
+    config: {name: dropout4, noise_shape: null, rate: 0.3, seed: null, trainable: true}
+    inbound_nodes:
+    - - - dense_11
+        - 0
+        - 0
+        - {}
+    name: dropout4
+  - class_name: Dense
+    config:
+      activation: linear
+      activity_regularizer: null
+      bias_constraint: null
+      bias_initializer:
+        class_name: Zeros
+        config: {}
+      bias_regularizer: null
+      kernel_constraint: null
+      kernel_initializer:
+        class_name: VarianceScaling
+        config: {distribution: uniform, mode: fan_avg, scale: 1.0, seed: null}
+      kernel_regularizer: null
+      name: dense_12
+      trainable: true
+      units: 1
+      use_bias: true
+    inbound_nodes:
+    - - - dropout4
+        - 0
+        - 0
+        - {}
+    name: dense_12
+  - class_name: Activation
+    config: {activation: sigmoid, name: activation_4, trainable: true}
+    inbound_nodes:
+    - - - dense_12
+        - 0
+        - 0
+        - {}
+    name: activation_4
+  name: model_3
+  output_layers:
+  - [activation_4, 0, 0]
+keras_version: 2.2.2
+
