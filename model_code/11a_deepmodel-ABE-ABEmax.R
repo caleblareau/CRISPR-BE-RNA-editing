@@ -12,7 +12,7 @@ source("00_functions.R")
 
 batch_size <- 256 # batch size for training 
 n_epochs <- 3 # training epochs
-model_dir <- "../model_outputs/ABE-ABEmax-27April"
+model_dir <- "../model_outputs/ABE-ABEmax-5June"
 
 # Create output directory
 dir.create(model_dir)
@@ -32,21 +32,41 @@ validation_labels <- list_two[["test"]][,"isEdited"] %>% as.numeric()
 training_array <- make_one_hot_five_channel_string(training_data) 
 validation_array <- make_one_hot_five_channel_string(validation_data)  
 
-# Fit CNN via keras / tensorflow
-model <- keras_model_sequential() %>%   
-  layer_conv_1d(filters = 50, kernel_size = 11, activation = "relu", input_shape = c(101, 5), name = "conv1") %>% 
-  layer_conv_1d(filters = 50, kernel_size = 11, activation = "relu", name = "conv2") %>% 
-  layer_global_average_pooling_1d() %>%
-  layer_dense(units = 50, activation = "relu") %>%
-  layer_dropout(rate = 0.5, name = "dropout1") %>%
-  layer_dense(units = 3, activation = "relu") %>%
-  layer_dense(units = 1, activation = "linear") %>%
-  layer_activation("sigmoid")
+# Fit residualbind via keras / tensorflow
+input_layer1 <-  layer_input(shape = c(101,5), name = 'input1')
+
+model_i1 <- input_layer1 %>% 
+  layer_conv_1d(filters = 96, kernel_size = 72, name = "conv_branch1") %>%
+  layer_batch_normalization() %>% 
+  layer_activation_relu() 
+
+model_i2  <- model_i1 %>%
+  layer_conv_1d(filters = 96, kernel_size = 1) %>% 
+  layer_batch_normalization(name = "a") %>%
+  layer_activation_relu() %>%
+  layer_dropout(rate = 0.3, name = "dropout1") %>%
+  layer_conv_1d(filters = 96, kernel_size = 1) %>% 
+  layer_batch_normalization(name = "b") 
+
+# Concatenate && flatten  
+predictions <- layer_add(list(model_i1, model_i2)) %>%
+  layer_activation_relu() %>%
+  layer_average_pooling_1d(pool_size = 10) %>%
+  layer_conv_1d(filters = 196, kernel_size = 3) %>% 
+  layer_batch_normalization(name = "c") %>%
+  layer_activation_relu() %>%
+  layer_flatten() %>%
+  
+  layer_dense(units = 1, activation = "sigmoid")
+
+model <- keras_model(inputs = input_layer1, outputs = predictions)
+model
+
 
 # Compile the model 
 model %>% compile(
   loss = "binary_crossentropy",
-  optimizer = optimizer_rmsprop(),
+  optimizer = optimizer_adam(clipnorm = 1e-6),
   metrics = c("accuracy")
 )
 
@@ -66,8 +86,8 @@ sequence_fit <- model %>% fit(
 )
 
 # Compute explicit model predictions
-training_prediction <- predict_proba(model, training_array)
-validation_prediction <- predict_proba(model, validation_array)
+training_prediction <- predict(model, training_array)
+validation_prediction <- predict(model, validation_array)
 
 # Determine AUROC / AUPRC
 training_df <- mmdata(training_prediction, training_labels, modnames = "Training_data") %>% evalmod() %>% auc()
